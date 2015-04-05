@@ -143,6 +143,7 @@ public:
  
     	tGoalOur0.execute(pgoalie);
 		tCover1.execute(pcover);
+  /*
     int dis[3];
 	dis[0] = Vector2D<int>::dist(state.homePos[2],state.ballPos) ;
 	dis[1] = Vector2D<int>::dist(state.homePos[3],state.ballPos) ;
@@ -213,7 +214,7 @@ public:
 	 }
     }
    }
-   
+  */ 
 	//***********************************************************************
 	
 
