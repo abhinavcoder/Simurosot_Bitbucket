@@ -91,8 +91,8 @@ void execute(const Param& tParam)
 			 
 			if(state->ballPos.x > (HALF_FIELD_MAXX - GOAL_DEPTH - 0.7*BOT_RADIUS - 2*BOT_RADIUS))
                  { 
-					dest.x = HALF_FIELD_MAXX - GOAL_DEPTH - 0.7*BOT_RADIUS - 5*BOT_RADIUS ;  //state->ballPos.x;
-			        dest.y = -1*SGN(state->ballPos.y)*(OPP_GOAL_MAXY); // -1*state->ballPos.y;
+					dest.x = state->ballPos.x; //HALF_FIELD_MAXX - GOAL_DEPTH - 0.7*BOT_RADIUS - 5*BOT_RADIUS ;  //state->ballPos.x;
+			        dest.y =  -1*state->ballPos.y; //-1*SGN(state->ballPos.y)*(OPP_GOAL_MAXY); // -1*state->ballPos.y;
 			       
 			     }
 	    Vector2D<int> oppGoal(HALF_FIELD_MAXX,0);

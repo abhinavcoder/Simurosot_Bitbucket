@@ -2,11 +2,17 @@
 #define TTCoverGoal_HPP
 //#define abcd
 #include <list>
+
+
 #include "../Skills/skillSet.h"
 #include "../Core/beliefState.h"
 #include "../common/include/config.h"
 #include "../Tactics/tactic.h"
 #include "comdef.h"
+#include "../Utils/pathPlanners.h"
+
+
+
 
 #define DEBUG 1
 namespace MyStrategy{
@@ -66,6 +72,7 @@ if(dist_from_goal + factor * perpend_dist < mindis)
     void execute(const Param& tParam)
     {
 
+		static int ishaan=0;
 		Vector2D<int> Point,point2;
 		Point.x=state->homePos[0].x;
 		Point.y=state->homePos[0].y;
@@ -74,6 +81,30 @@ if(dist_from_goal + factor * perpend_dist < mindis)
 		float diS2=Vector2D<int>::dist(state->homePos[botID],state->ballPos);
 
 		printf("CoverGoal BotID: %d\n",botID);
+		///THE GIVEN STATEMENT IS TO AVOID BEING DRAGGED INTO THE OTHER HALF 
+		//IT WILL START SPINNING IF IT IS IN THE OTHER HALF 
+		/*
+		if(state->homePos[botID].x>0)
+		{
+			
+			
+			 if(ishaan<5 &&  ishaan>=0)
+			{
+			 sID = SkillSet::Velocity;
+			 sParam.VelocityP.vl = +120;
+             sParam.VelocityP.vr = -120;
+			 skillSet->executeSkill(sID, sParam);
+			 ishaan++;
+			// if(ishaan==5)ishaan=-200;
+			 return ; 
+			 }
+			 ishaan++;
+			 
+			 
+			//comm->sendCommand(botID,MAX_BOT_SPEED,-MAX_BOT_SPEED);
+		   	
+		}
+		*/
 	  if(clearing_chance()==false)
 		  charge=false;
       if (charge==false  && clearing_chance()==false)
@@ -83,45 +114,67 @@ if(dist_from_goal + factor * perpend_dist < mindis)
 		  {
         sParam.GoToPointP.align = false;
         sParam.GoToPointP.finalslope =0;
-        sParam.GoToPointP.x =0;
+        sParam.GoToPointP.x =-DBOX_WIDTH;
         sParam.GoToPointP.y =state->ballPos.y ;
 		  }
 		else if(state->ballPos.x < HALF_FIELD_MAXX - DBOX_WIDTH -BOT_RADIUS )
 		{
-
+			 
 			sID = SkillSet::GoToPoint;
         sParam.GoToPointP.align = false;
         sParam.GoToPointP.finalslope =0;
         //0.45*(state->ballPos.x -(HALF_FIELD_MAXX - GOAL_DEPTH ));
-        sParam.GoToPointP.x =0.45*(state->ballPos.x -(HALF_FIELD_MAXX - GOAL_DEPTH ));
+        sParam.GoToPointP.x =0.4*(state->ballPos.x +(HALF_FIELD_MAXX - GOAL_DEPTH ))-(HALF_FIELD_MAXX - GOAL_DEPTH );
         sParam.GoToPointP.y = state->ballPos.y;
 
 
 		}
       }
-	  else if(diS2<BOT_BALL_THRESH)
+	  else if(diS2<2*BOT_BALL_THRESH && state->ballPos.x<0)// do not go in goalie region daalna hai abhi
 	  {
+		  //ishaan=0;
+		sID = SkillSet::GoToPoint;
 		sParam.GoToPointP.align = false;
 		sParam.GoToPointP.finalslope = 0;
 		sParam.GoToPointP.x = state->ballPos.x; 
 		sParam.GoToPointP.y = state->ballPos.y; 
+		if(state->ballPos.x>state->homePos[botID].x) 
+		{
+			sParam.GoToPointP.finalVelocity=5;
+			/* if(state->ballPos.y>state->homePos[botID].y)
+				comm->sendCommand(botID,MAX_BOT_SPEED,-MAX_BOT_SPEED);
+				else
+				 comm->sendCommand(botID,-MAX_BOT_SPEED,MAX_BOT_SPEED);*/
+		}
+		//READ COMMENTS BELOW AND PUT THEM HERE ACCORDINGLY
+
 		  }
 
 	  else if(1)
 	    {
 	        //Vector2D<int> P2;
+			//ishaan=0;
              sID = SkillSet::GoToPoint;
-		  if(state->ballPos.x <= 0 && state->ballPos.x >= state ->homePos[botID].x && state->ballPos.x>=-(HALF_FIELD_MAXX-1.5*DBOX_WIDTH))
+		  if(state->ballPos.x <= 0 && state->ballPos.x >= state ->homePos[botID].x && state->ballPos.x>=-(HALF_FIELD_MAXX-1.2*DBOX_WIDTH))
 		  {
 
-				if( state->ballVel.x>700)
+				if( state->ballVel.x>500)
 				{
 					sParam.GoToPointP.align = false;
 					sParam.GoToPointP.finalslope = 0;
 
-					sParam.GoToPointP.x = -HALF_FIELD_MAXX + 1.5*DBOX_WIDTH	; // ..................changed
+					sParam.GoToPointP.x = -HALF_FIELD_MAXX + 1.2*DBOX_WIDTH	; // ..................changed
 					sParam.GoToPointP.y = state->ballPos.y; //................changed
-
+					if(state->ballPos.x>state->homePos[botID].x) 
+					{
+						sParam.GoToPointP.finalVelocity=75;
+						/* if(state->ballPos.y>state->homePos[botID].y)
+								comm->sendCommand(botID,MAX_BOT_SPEED,-MAX_BOT_SPEED);
+							else
+								comm->sendCommand(botID,-MAX_BOT_SPEED,MAX_BOT_SPEED);*/
+					}
+					///YAHA PAR DAAL ATTACK KA FEATURE EK FINAL VELOCITY SE BHEJ DE AUR UPAR EK ELSE IF CONDITION HAI else if(diS2<2*BOT_BALL_THRESH) USMAIN ABHI CHANGE KARKE MUJHE FATAFUT BHEJ 
+	////YAHA PAR GOTOPOINT WITH VELOCITY DAALDE AUR UPAR ELSE IF MAIN ATTACK AUR SPIN SAB KUCH DAAL DE WHEN BALL IS TO THE LEFT OF THE BOT
 				}
             else if(diS>diS2)
                 {
@@ -129,19 +182,29 @@ if(dist_from_goal + factor * perpend_dist < mindis)
 					sParam.GoToPointP.finalslope = 0;
 					sParam.GoToPointP.x = state->ballPos.x; // ..................changed
 					sParam.GoToPointP.y = state->ballPos.y; 
+				    if(state->ballPos.x>state->homePos[botID].x) 
+					{
+						sParam.GoToPointP.finalVelocity=75;
+						/* if(state->ballPos.y>state->homePos[botID].y)
+								comm->sendCommand(botID,MAX_BOT_SPEED,-MAX_BOT_SPEED);
+							else
+								comm->sendCommand(botID,-MAX_BOT_SPEED,MAX_BOT_SPEED);*/
+					}
+					////YAHA PAR BHI GOTO POINT WITH VELOCITY DAAL 
+
                 }
                 else
                 {
                     sParam.GoToPointP.align = false;
 					sParam.GoToPointP.finalslope = 0;
-                    sParam.GoToPointP.x = -HALF_FIELD_MAXX + 1.5*DBOX_WIDTH	; // ..................changed
+                    sParam.GoToPointP.x = -HALF_FIELD_MAXX + 1.2*DBOX_WIDTH	; // ..................changed
 					sParam.GoToPointP.y = state->ballPos.y; 
                 }
             
  //return;
             skillSet->executeSkill(sID, sParam);
           }
-		  else if (state->ballPos.x <= 0 && state->ballPos.x <= state ->homePos[botID].x && state->ballPos.x>=-(HALF_FIELD_MAXX-1.5*DBOX_WIDTH))
+		  else if (state->ballPos.x <= 0 && state->ballPos.x <= state ->homePos[botID].x && state->ballPos.x>=-(HALF_FIELD_MAXX-1.2*DBOX_WIDTH))
 		  {
             sParam.GoToPointP.align = false;
             sParam.GoToPointP.finalslope = 0;
@@ -166,16 +229,34 @@ if(dist_from_goal + factor * perpend_dist < mindis)
 			
 					sParam.GoToPointP.x =state->ballPos.x	; // ..................changed
 					sParam.GoToPointP.y = state->ballPos.y; //................changed
-					
+					if(state->ballPos.x>state->homePos[botID].x) 
+					{
+						sParam.GoToPointP.finalVelocity=25;
+						/* if(state->ballPos.y>state->homePos[botID].y)
+								comm->sendCommand(botID,MAX_BOT_SPEED,-MAX_BOT_SPEED);
+							else
+								comm->sendCommand(botID,-MAX_BOT_SPEED,MAX_BOT_SPEED);*/
+					}
+					////YAHA PAR BHI GOTO POINT WITH VELOCITY DAAL 
+	
 				}
 				else if(state->ballPos.y<=OUR_GOAL_MINY - 1.8*BOT_RADIUS)
 				{
 					
 					sParam.GoToPointP.align = false;
-					sParam.GoToPointP.finalslope = PI;
+					sParam.GoToPointP.finalslope = 0;
 			
 					sParam.GoToPointP.x =state->ballPos.x	; // ..................changed
 					sParam.GoToPointP.y = state->ballPos.y; //................changed
+					if(state->ballPos.x>state->homePos[botID].x) 
+					{
+						sParam.GoToPointP.finalVelocity=25;
+						/* if(state->ballPos.y>state->homePos[botID].y)
+								comm->sendCommand(botID,MAX_BOT_SPEED,-MAX_BOT_SPEED);
+							else
+								comm->sendCommand(botID,-MAX_BOT_SPEED,MAX_BOT_SPEED);*/
+					}
+					////YAHA PAR BHI GOTO POINT WITH VELOCITY DAAL 
 
 				}
 

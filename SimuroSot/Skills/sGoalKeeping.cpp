@@ -82,7 +82,6 @@ return flag ;
 		  {
 			  botDestination.x = (-HALF_FIELD_MAXX + GOAL_DEPTH -0.5*/*100**/BOT_RADIUS);// 0.7*BOT_RADIUS;
 			  botDestination.y = OUR_GOAL_MINY + 50;//0.5*BOT_RADIUS;
-		     
 		  }
         int opID =  state->oppBotNearestToBall;
 		if(float oppdist = Vector2D<int>::dist(state->awayPos[opID],state->ballPos)< 3*BOT_BALL_THRESH)
@@ -214,16 +213,16 @@ return flag ;
 			 int count=0;
 			 for(int i=0;i<5; ++i)
 			 {
-				 if(state->awayPos[i].x<(-HALF_FIELD_MAXX/2+1*BOT_RADIUS))
+				 if(state->awayPos[i].x<(-HALF_FIELD_MAXX/2+2*BOT_RADIUS))
 				 {
 					 if(state->homePos[botID].x-state->awayPos[i].x!=0)
 					 {
-						 if(abs((state->homePos[botID].y-state->awayPos[i].y)/(state->homePos[botID].x-state->awayPos[i].x))<1/2) count++; // if opponent bot is within an angle of 45 degrees does not shoot.
+						 if(abs((state->homePos[botID].y-state->awayPos[i].y)/(state->homePos[botID].x-state->awayPos[i].x))<1) count++; // if opponent bot is within an angle of 45 degrees does not shoot.
 				     }
 				 }
 			 }
 				 
-			 if(/*float distanc = Vector2D<int>::dist(state->awayPos[state->oppBotNearestToBall],state->homePos[botID])> 2*BOT_RADIUS && */!count && (abs(state->ballVel.y)<800))
+			 if(/*float distanc = Vector2D<int>::dist(state->awayPos[state->oppBotNearestToBall],state->homePos[botID])> 2*BOT_RADIUS && */!count && (abs(state->ballVel.y)<900))
 			 {
 				Vector2D<int> finalpoint;
 				 finalpoint.x=state->ballPos.x;
