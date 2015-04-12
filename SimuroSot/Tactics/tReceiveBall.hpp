@@ -36,6 +36,7 @@ namespace MyStrategy
 
     int chooseBestBot(std::list<int>& freeBots, const Tactic::Param* tParam) const
     {
+		/*
       float minv = *(freeBots.begin());
       float mindis = 1e12;
       const Vector2D<int> &ballpos = state->ballPos;
@@ -79,7 +80,9 @@ namespace MyStrategy
 	   else 
 		   return 3;
       return 4;//minv;
-     } // chooseBestBot  :: will controlled by the tester function
+     */
+		return 4 ;
+	 } // chooseBestBot  :: will controlled by the tester function
 void execute(const Param& tParam)
 	 {
 	  char debug[50];
