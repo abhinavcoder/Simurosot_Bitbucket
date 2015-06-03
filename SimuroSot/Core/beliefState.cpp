@@ -273,8 +273,8 @@ namespace MyStrategy
   }
 
   void BeliefState::checkForGoal(){
-	//  print("oppGoal Scored is %d ballpos-%d %d",oppGoalCount, ballPos.x, ballPos.y);
-	 // print("ourGoal Scored is %d ballPos-%d %d",ourGoalCount, ballPos.x, ballPos.y);
+	  print("oppGoal Scored is %d ballpos-%d %d",oppGoalCount, ballPos.x, ballPos.y);
+	  print("ourGoal Scored is %d ballPos-%d %d",ourGoalCount, ballPos.x, ballPos.y);
 	  if(ballOppGoal==true){
 		  if(ballPos.x < HALF_FIELD_MAXX/2)
 			  ballOppGoal=false;
@@ -293,7 +293,7 @@ namespace MyStrategy
 	  if(ballPos.x >HALF_FIELD_MAXX-GOAL_DEPTH && ballPos.y<OPP_GOAL_MAXY && ballPos.y >OPP_GOAL_MINY){
 		  if(ballOppGoal==false){
 		       ourGoalCount++;
-		//	   print("oppGoal Scored is %d",oppGoalCount);
+			   print("oppGoal Scored is %d",oppGoalCount);
 		  }
 		  ballOppGoal=true;
 	  }
