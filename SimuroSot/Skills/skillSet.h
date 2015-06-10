@@ -6,6 +6,10 @@
 #include "../HAL/comm.h"
 #include <vector>
 #include "..\Utils\pathPlanners.h"
+#include "pose.h"
+#include "controller-wrapper.hpp"
+#include "trajectory.hpp"
+
 // Forward Declarations
 namespace MyStrategy
 {
@@ -81,9 +85,23 @@ namespace MyStrategy
         bool increaseSpeed;
 		bool trapezoidal;
       } GoToPointP;
+	  struct type9
+      {
+        float x;
+        float y;
+        float finalSlope;
+        float finalVelocity;
+		bool initTraj;
+      } SplineGoToPointP;
+
     };
   class SkillSet
   {
+	  private:
+		ControllerWrapper *algoController;
+		Trajectory* traj;
+		std::queue<Pose> predictedPoseQ;
+
   public:
     enum SkillID
     {
@@ -99,6 +117,7 @@ namespace MyStrategy
       DefendPoint,
       GoToPointStraight,
       GoToBallStraight,
+	  SplineGoToPoint,
 	  ChargeBall,
 	  TestSkill,
 	  KickBall,
@@ -127,7 +146,7 @@ namespace MyStrategy
     void _dribbleToPoint(int botID, Vector2D<int> dpoint, float finalvel, float finalslope, float clearance);
     void _turnToAngle(float angle, float *vl, float *vr);
     void _goToPointStraight(int botid, Vector2D<int> dpoint, float finalvel, float finalslope, float clearance);
-    int prevVel;
+	int prevVel;
     /***************************By Prasann***********/
     float predicted_distance;
     float predicted_rotation;
@@ -155,7 +174,11 @@ namespace MyStrategy
 	void chargeBall(const SParam& param);
 	void testSkill(const SParam& param);
 	void kickBall(const SParam& param) ;
-    
+    void splineGoToPoint(const SParam& param);
+	void _splineGoToPointTrack(int botid, Pose start, Pose end, float finalvel);
+	void _splineGoToPointInitTraj(int botid, Pose start, Pose end, float finalvel);
+
+
     // Parameter for skills to be trained
     static bool loadParamsFromFile;
     static bool  skillParamsLoaded;

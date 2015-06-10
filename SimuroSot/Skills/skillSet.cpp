@@ -10,7 +10,7 @@
 #include "../HAL/comm.h"
 #include "../common/include/geometry.hpp"
 #include "../winDebugger/Client.h"
-#include "../pose.h"
+#include "pose.h"
 #include <math.h>
 #include <stdlib.h>
 #include <algorithm>
@@ -20,16 +20,6 @@
 using namespace HAL;
 using namespace std;
 using namespace dlib;
-
-const double Pose::d          = 6.5; //distance between wheels in cm
-const double Pose::ticksToCmS = 1.107; //still only approximate...
-const double Pose::fieldXConvert = 23.79;
-const double Pose::fieldYConvert = 22.02;
-// NOTE(arpit): Uncertainties should be non-zero when simulating. Currently 0 since bot data is fetched from vision.
-const double Pose::xUncertainty = 0;//0.5; // Uncertainty is in %age of max value. eg. 1% where fabs(x) <= 1000 means fabs(error) <= 10
-const double Pose::yUncertainty = 0;//0.5;
-const double Pose::thetaUncertainty = 0;//3;
-
 
 namespace MyStrategy
 {
@@ -70,6 +60,7 @@ SkillSet::SkillSet(const BeliefState* state, const int botID) :
   skillList[GoToBall]       = &SkillSet::goToBall;
   skillList[GoToPoint]      = &SkillSet::goToPoint;
   skillList[GoToPointDW]    = &SkillSet::goToPointDW;
+  skillList[SplineGoToPoint]    = &SkillSet::splineGoToPoint;
   skillList[TurnToAngle] = &SkillSet::turnToAngle;
   skillList[TurnToPoint] = &SkillSet::turnToPoint;
   skillList[DefendPoint] = &SkillSet::defendPoint;
@@ -545,7 +536,7 @@ static float vl =0 , vr =0 ;
     // Client::debugClient->SendMessages(debug);
 	//sprintf(debug," homeVel.x :: %f || homeVel.y :: %f \n ",state->homeVel[botid].x,state->homeVel[botid].y) ; 
 	float prevSpeed = (vl + vr)/2 ;//sqrt(pow(state->homeVel[botid].x, 2) + pow(state->homeVel[botid].y, 2));
-	float prevOmega = 0.0 ; // (vl - vr)/(2*Pose::d);//(vr - vl)/(Pose::d) ;//state->homeOmega[botid] ; 
+	float prevOmega = 0.0 ; // (vl - vr)/(2*d);//(vr - vl)/(d) ;//state->homeOmega[botid] ; 
 	//double prevSpeed = (state->homeVel[botid].x+state->homeVel[botid].y)/2;
    // double prevOmega = (prevVr- prevVl)/(Constants::d);
 	//float prevSpeed, prevOmega,alpha,acc,theta,x,y,reqtheta,dtheta;
@@ -558,14 +549,14 @@ static float vl =0 , vr =0 ;
             for(float del_vl=-del_v_max;del_vl<=del_v_max;del_vl+=step)
             {
 
-                float newSpeed= prevSpeed + Pose::ticksToCmS*(del_vr+del_vl)/2; // cm/s
-                float newOmega= prevOmega + Pose::ticksToCmS*(del_vr-del_vl)/Pose::d;  // cm/s                //D Is the constant breadth of the bot
+                float newSpeed= prevSpeed + ticksToCmS*(del_vr+del_vl)/2; // cm/s
+                float newOmega= prevOmega + ticksToCmS*(del_vr-del_vl)/d;  // cm/s                //D Is the constant breadth of the bot
 //                qDebug()<<"Trying newSpeed = "<<newSpeed<<" newOmega = "<<newOmega;
 				//sprintf(debug,"newSpeed :: %f || newomega :: %f \n ",newSpeed,newOmega) ;
 				//Client::debugClient->SendMessages(debug);
-				if(abs(newSpeed/Pose::ticksToCmS) >max_vel || abs(newOmega/Pose::ticksToCmS) >(2*max_vel)/Pose::d)
+				if(abs(newSpeed/ticksToCmS) >max_vel || abs(newOmega/ticksToCmS) >(2*max_vel)/d)
                     continue;
-                if(abs((newSpeed+(Pose::d*newOmega)/2)) > max_vel ||  abs((newSpeed-(Pose::d *newOmega)/2)) > max_vel)
+                if(abs((newSpeed+(d*newOmega)/2)) > max_vel ||  abs((newSpeed-(d *newOmega)/2)) > max_vel)
                     continue;
                 if((newSpeed*newOmega)>=a_r_max*sqrt(1-pow((del_vr + del_vl)/(2*del_v_max),2)))
                     continue;                   // constraint from the equation of ellipse.
@@ -610,11 +601,11 @@ static float vl =0 , vr =0 ;
     float y= s.y() + (best_v*sin(theta)*t);
 
     //outStream<<best_v<< '\t'<< best_w <<'\t'<< x <<'\t'<< y<<endl;
-    vr=(best_v)+(Pose::d *best_w)/2 ;                    // update velocity
+    vr=(best_v)+(d *best_w)/2 ;                    // update velocity
 
     vl=(2*best_v) - vr;                       // update omega
-    vr/=Pose::ticksToCmS;
-    vl/=Pose::ticksToCmS;
+    vr/=ticksToCmS;
+    vl/=ticksToCmS;
 	//sprintf(debug," vl :: %d || vr :: %d ",vl,vr);
  
 #if FIRA_COMM || FIRASSL_COMM
@@ -734,9 +725,9 @@ void SkillSet::_goToPointPolar (int botid, Vector2D<int> dpoint, float finalvel,
     double v_curve = MAX_BOT_SPEED/(1+beta*pow(fabs(k),lambda));
     if (v_curve < MIN_BOT_SPEED)
         v_curve = MIN_BOT_SPEED;    
-    v *= Pose::ticksToCmS;
-    vl = v - Pose::d*w/2;
-    vr = v + Pose::d*w/2;
+    v *= ticksToCmS;
+    vl = v - d*w/2;
+    vr = v + d*w/2;
     double timeMs = 0.250*rho + 14.0 * sqrt(rho) + 100.0 * fabs(gamma);
     double speed = timeMs/timeLCMs<(prevSpeed/MAX_BOT_LINEAR_VEL_CHANGE)?prevSpeed-MAX_BOT_LINEAR_VEL_CHANGE:prevSpeed+MAX_BOT_LINEAR_VEL_CHANGE;    
     // use vcurve as the velocity

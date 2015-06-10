@@ -49,7 +49,8 @@
     <OutDir>.\Debug\</OutDir>
     <IntDir>.\Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\QtCommercial\QtCommercial5.0.2\5.0.2\msvc2012_64\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\QtCommercial\QtCommercial5.0.2\5.0.2\msvc2012_64\include;C:\gsl\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\gsl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -94,7 +95,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <Optimization>Disabled</Optimization>
@@ -134,16 +135,38 @@
       <SubSystem>Console</SubSystem>
       <OutputFile>.\Debug\Strategy.dll</OutputFile>
       <ImportLibrary>.\Debug\Strategy.lib</ImportLibrary>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;C:\gsl\lib\gsl.lib;C:\gsl\lib\gslcblas.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common\include\config.cpp" />
-    <ClCompile Include="pose.cpp" />
+    <ClCompile Include="Skills\alglib\alglibinternal.cpp" />
+    <ClCompile Include="Skills\alglib\alglibmisc.cpp" />
+    <ClCompile Include="Skills\alglib\ap.cpp" />
+    <ClCompile Include="Skills\alglib\dataanalysis.cpp" />
+    <ClCompile Include="Skills\alglib\diffequations.cpp" />
+    <ClCompile Include="Skills\alglib\fasttransforms.cpp" />
+    <ClCompile Include="Skills\alglib\integration.cpp" />
+    <ClCompile Include="Skills\alglib\interpolation.cpp" />
+    <ClCompile Include="Skills\alglib\linalg.cpp" />
+    <ClCompile Include="Skills\alglib\optimization.cpp" />
+    <ClCompile Include="Skills\alglib\solvers.cpp" />
+    <ClCompile Include="Skills\alglib\specialfunctions.cpp" />
+    <ClCompile Include="Skills\alglib\statistics.cpp" />
+    <ClCompile Include="Skills\arclength-param.cpp" />
+    <ClCompile Include="Skills\controller-wrapper.cpp" />
+    <ClCompile Include="Skills\controllers.cpp" />
+    <ClCompile Include="Skills\pose.cpp" />
     <ClCompile Include="Skills\sChargeBall.cpp" />
     <ClCompile Include="Skills\sGoToPointDW.cpp" />
     <ClCompile Include="Skills\sKickBall.cpp" />
+    <ClCompile Include="Skills\splines.cpp" />
+    <ClCompile Include="Skills\sSplineGoToPoint.cpp" />
     <ClCompile Include="Skills\sTestSkill.cpp" />
+    <ClCompile Include="Skills\tracking.cpp" />
+    <ClCompile Include="Skills\trajectory.cpp" />
+    <ClCompile Include="Skills\velocity-profile.cpp" />
     <ClCompile Include="Utils\intersection.cpp" />
     <ClCompile Include="Utils\LocalAvoidance.cpp" />
     <ClCompile Include="winDebugger\Client.cpp" />
@@ -176,7 +199,28 @@
     <ClCompile Include="Utils\mergeSCurve.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pose.h" />
+    <ClInclude Include="Skills\alglib\alglibinternal.h" />
+    <ClInclude Include="Skills\alglib\alglibmisc.h" />
+    <ClInclude Include="Skills\alglib\ap.h" />
+    <ClInclude Include="Skills\alglib\dataanalysis.h" />
+    <ClInclude Include="Skills\alglib\diffequations.h" />
+    <ClInclude Include="Skills\alglib\fasttransforms.h" />
+    <ClInclude Include="Skills\alglib\integration.h" />
+    <ClInclude Include="Skills\alglib\interpolation.h" />
+    <ClInclude Include="Skills\alglib\linalg.h" />
+    <ClInclude Include="Skills\alglib\optimization.h" />
+    <ClInclude Include="Skills\alglib\solvers.h" />
+    <ClInclude Include="Skills\alglib\specialfunctions.h" />
+    <ClInclude Include="Skills\alglib\statistics.h" />
+    <ClInclude Include="trajectory-generators.h" />
+    <ClInclude Include="Skills\arclength-param.hpp" />
+    <ClInclude Include="Skills\controller-wrapper.hpp" />
+    <ClInclude Include="Skills\controllers.h" />
+    <ClInclude Include="Skills\pose.h" />
+    <ClInclude Include="Skills\splines.hpp" />
+    <ClInclude Include="Skills\tracking.hpp" />
+    <ClInclude Include="Skills\trajectory.hpp" />
+    <ClInclude Include="Skills\velocity-profile.hpp" />
     <ClInclude Include="Tactics\tAttackLingo.hpp" />
     <ClInclude Include="Tactics\tAttackNew.hpp" />
     <ClInclude Include="Tactics\tMidField.hpp" />

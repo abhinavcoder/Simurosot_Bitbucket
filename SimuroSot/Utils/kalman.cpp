@@ -16,8 +16,8 @@ const int botcenterbluecenterdist =75; //Ankit: for botCentreTransform
 inline void linearTransform(int &x, int &y, float &newangle, bool invert_field)
 {
     int tempx, tempy;
-  tempx = SGN(-invert_field+0.5)*(5000-x);
-  tempy = SGN(-invert_field+0.5)*(4200-y);
+  tempx = SGN(-invert_field+0.5)*(4725-x);
+  tempy = SGN(-invert_field+0.5)*(3530-y);
   x = tempx;
   y = tempy;
   newangle = !invert_field?normalizeAngle(newangle+PI):newangle;
