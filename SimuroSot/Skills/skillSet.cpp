@@ -772,4 +772,14 @@ void SkillSet::_goToPointPolar (int botid, Vector2D<int> dpoint, float finalvel,
     return; 
 }
 
+bool SkillSet::isFrontDirected(Pose botPos, Pose endPos){
+	int r=10;
+	double cosTheta = cos(botPos.theta());
+	double sinTheta = sin(botPos.theta());
+	double testx = botPos.x() + r*cosTheta;
+	double testy = botPos.y() + r*sinTheta;
+	double v1 = testx / tan(botPos.theta()) + testy - botPos.x()/tan(botPos.theta()) - botPos.y();
+	double v2 = endPos.x() / tan(botPos.theta()) + endPos.y() - botPos.x() / tan(botPos.theta()) - botPos.y();
+	return (v1*v2 >= 0)?true:false;
+}
 } // namespace MyStrategy

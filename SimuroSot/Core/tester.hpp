@@ -151,7 +151,7 @@ public:
 		 
 		  //********************************************************
 		  
-		 tGoalOur0.execute(pgoalie);
+		// tGoalOur0.execute(pgoalie);
 	//	 tCover1.execute(pcover);
 
     int dis[3];
@@ -274,6 +274,7 @@ public:
 	//tmidfield4.execute(pmid);
 	//tattacklingo4.execute(pattacklingo);
 	//tCover1.execute(pcover);
+#ifdef gunjan
 	tReceive3.execute(pReceive);
 	if(dis[0]<dis[2])
 	{
@@ -325,7 +326,7 @@ public:
 		}
 	
 	}	
-
+#endif
 	//***********************************************************************
 	
 
@@ -381,7 +382,7 @@ public:
 	//  tReceive3.execute(pReceive);
       //tDefendLine1.execute(pDefendLine);
   		//  tbackup4.execute(pbackup);
-	//	spline0.executeSkill(SkillSet::SplineGoToPoint,spline);
+	 	spline0.executeSkill(SkillSet::SplineGoToPoint,spline);
     // p1.executeSkill(SkillSet::GoToPoint,sp); 
 //		  p1.executeSkill(SkillSet::GoalKeeping,sp);
 		 // tbackup4.execute(pbackup);

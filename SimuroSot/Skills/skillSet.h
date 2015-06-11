@@ -178,7 +178,8 @@ namespace MyStrategy
 	void _splineGoToPointTrack(int botid, Pose start, Pose end, float finalvel);
 	void _splineGoToPointInitTraj(int botid, Pose start, Pose end, float finalvel);
 
-
+	bool direction;
+	bool isFrontDirected(Pose botPos, Pose endPos);
     // Parameter for skills to be trained
     static bool loadParamsFromFile;
     static bool  skillParamsLoaded;
