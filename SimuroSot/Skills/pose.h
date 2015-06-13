@@ -3,9 +3,9 @@
 #include <queue>
 #include <math.h>
 #include <time.h>
-#include <stdlib.h>
-#include "common\include\geometry.hpp"
-#include "common\include\config.h"
+#include <cstdlib>
+#include "..\common\include\geometry.hpp"
+#include "..\common\include\config.h"
 /* Pose defines the position and angle of the robot.
  * It is in REAL WORLD coordinates (m and radians).
  * NOTE: vl, vr are taken in ticks only. dt is in ms
@@ -16,21 +16,22 @@ struct MiscData {
     double k;  // curvature
     double v_curve;
     double finalSpeed, rangeMin, rangeMax;
-    MiscData(): k(-1), v_curve(0), finalSpeed(0), rangeMin(0), rangeMax(0) {}
+    // misc data for tracker debugging
+    double v_ref, omega_ref, v1, v2;
+    double t, v, w;
+    double vl, vr;
+    double vl_ref, vr_ref;
+    MiscData(): k(-1), v_curve(0), finalSpeed(0), rangeMin(0), rangeMax(0), v_ref(0), omega_ref(0), v1(0), v2(0) {}
     MiscData(double k, double v_curve, double finalSpeed, double rangeMin, double rangeMax): k(k), v_curve(v_curve), finalSpeed(finalSpeed), rangeMin(rangeMin), rangeMax(rangeMax) {}
+    MiscData(double v_ref, double omega_ref, double v1, double v2, double t, double v, double w
+             , double vl, double vr, double vl_ref, double vr_ref): k(0), v_curve(0), finalSpeed(0),
+        rangeMin(0), rangeMax(0), v_ref(v_ref), omega_ref(omega_ref), v1(v1), v2(v2), t(t), v(v), w(w), vl(vl), vr(vr),
+        vl_ref(vl_ref), vr_ref(vr_ref) {}
 };
+
 class Pose
 {
     double x_, y_, theta_;
-public:
-    static const double d         ; //distance between wheels in cm
-    static const double ticksToCmS ; //still only approximate...
-    static const double fieldXConvert ;
-    static const double fieldYConvert ;
-    // NOTE(arpit): Uncertainties should be non-zero when simulating. Currently 0 since bot data is fetched from vision.
-    static const double xUncertainty;//0.5; // Uncertainty is in %age of max value. eg. 1% where fabs(x) <= 1000 means fabs(error) <= 10
-    static const double yUncertainty ;//0.5;
-    static const double thetaUncertainty;//3;
 private:
     void update_1(int vl_ticks, int vr_ticks, double dt); // simple update, without delay.
     void update_2(int vl_ticks, int vr_ticks, double dt); // delay of 1 tick bw updates.
@@ -50,6 +51,10 @@ public:
     void update(int vl, int vr, double dt);               // takes vl, vr in ticks. Implicitly converts to cm/s!! updates pose.
     void updateNoDelay(int vl, int vr, double dt);        // updates without any delay mechanics.
     void setTheta(double newtheta) {theta_ = newtheta;}   // will add setX and setY if/when needed
+	Pose operator-(const Pose &p) {
+        return Pose(queryX()-p.queryX(), queryY()-p.queryY(), queryTheta()- p.queryTheta());
+    }
+
 };
 
 inline double dist(Pose p1, Pose p2) {

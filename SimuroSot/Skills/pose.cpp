@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "pose.h"
 #include <math.h>
 #include <algorithm>

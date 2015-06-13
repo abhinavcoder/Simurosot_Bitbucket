@@ -17,7 +17,9 @@ namespace MyStrategy
 
 	void SkillSet::kickBall(const SParam &param)
   {
-// is called only when bot is behind the ball  
+// is called only when bot is behind the ball 
+	  ofstream outfile;
+	  outfile.open("log.txt", ios::out , ios::app );
 	  char debug[250];
 	//  if (abs(state->ballPos.x)>HALF_FIELD_MAXX ||abs(state->ballPos.y)>HALF_FIELD_MAXY || abs(state->ballVel.x)>10000 || abs(state->ballVel.y)>10000) return;
 	 // written for safe condition 
@@ -75,8 +77,8 @@ namespace MyStrategy
 					  else  
 				          time_error[i]=abs((tx1-tx2)*(ty1-ty2));
 		  
-			//   outfile<<"i : "<<i<<" xpos[i] : "<<xpos[i]<<" ypos[i] : "<<ypos[i]<<" time_error"<<time_error[i]<<endl ;
-			 //  outfile.close();
+			   outfile<<"i : "<<i<<" xpos[i] : "<<xpos[i]<<" ypos[i] : "<<ypos[i]<<" time_error"<<time_error[i]<<endl ;
+			   outfile.close();
  			  }
 			  time_error[0] = INF;
 			  float min=time_error[0];

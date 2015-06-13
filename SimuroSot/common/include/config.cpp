@@ -48,7 +48,7 @@ const int STRIP_WIDTH_Y                = BOT_RADIUS*1.5;
 const int MAX_FIELD_DIST               = SELECT(1000, 3500);                // mm
 const float MAX_WHEEL_SPEED            = SELECT(2000, 100);                 //mm/s
 const float MAX_BOT_LINEAR_ACC         = SELECT(1000, 100);                // mm/s/s
-const float MAX_BOT_LINEAR_VEL_CHANGE  = SELECT(10, 3);
+const float MAX_BOT_LINEAR_VEL_CHANGE  = SELECT(10, 4);
 const float MAX_BOT_SPEED              = SELECT(1800, 120.0);                 // mm  //120
 const float MIN_BOT_SPEED              = SELECT(5, 30);                     // mm/s
 const float MAX_BOT_OMEGA              = SELECT(7, 40);                     // rad/s//2
@@ -74,3 +74,21 @@ const int OPP_GOAL_Y = 0;
 const float NETWORK_DELAY = SELECT(0.05, 0.05);  // Network Delay in miliseconds
 //Distance Hysteresis factor for switching of roles
 const int HYSTERESIS = SELECT(20000, 300);
+
+// Parameters useful for camera's data transformation.
+const double d          = 6.5; //distance between wheels in cm
+const double ticksToCmS = 1.107; //still only approximate... v = v_ticks * ticksToCmS
+const double fieldXConvert = 37.15;//23.79; // now im always using xconvert as standard conversion from strategy -> cm and vice versa.
+const double fieldYConvert = 34.39;//22.02;
+// NOTE(arpit): Uncertainties should be non-zero when simulating. Currently 0 since bot data is fetched from vision.
+const double xUncertainty = 0;//0.5; // Uncertainty is in %age of max value. eg. 1% where fabs(x) <= 1000 means fabs(error) <= 10
+const double yUncertainty = 0;//0.5;
+const double thetaUncertainty = 0;//3;
+// NOTE(arpit): numPacketDelay and update() specified here is only used in simulation.
+const int numPacketDelay = 0; // num of packets to delay in update
+
+const double vwmax      = 200; // cm/s^2
+const double vsat       = ticksToCmS*100.; // cm/s
+const double atmax      = 200*ticksToCmS; // cm/s^2, need to measure this, need to take inertia into account
+const double awmax      = 1000; // 1/s^2, no idea how to measure this, need to take inertia into account
+
