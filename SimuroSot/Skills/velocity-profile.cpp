@@ -57,96 +57,6 @@ Interval trans_acc_limits(double vwold, double vwmax, double vold, double atmax,
   return Interval(vmin, vmax);
 }
 
-// rotational acceleration constraint
-// awmax: maximum rotational acceleration, 1/s^2
-vector<Interval> rot_acc_limits(double vold, double kold, double k, double dels,
-  double awmax) {
-  vector<Interval> ans;
-  double v1, v2, v1_star, v2_star, v1_cap, v2_cap;
-  if (k > 1e-5) {
-    double term = (k+kold)*(k+kold)*vold*vold-8*k*awmax*dels;
-    if (term < 0) {
-      {
-        double term = sqrt((k+kold)*(k+kold)*vold*vold+8*k*awmax*dels);
-        v1 = 1/(2*k)*((kold-k)*vold+term);
-        v2 = 1/(2*k)*((kold-k)*vold-term);
-      }
-      Interval i(v2, v1);
-      ans.push_back(i);
-      return ans;
-    } else {
-      {
-        double term = sqrt((k+kold)*(k+kold)*vold*vold+8*k*awmax*dels);
-        v1 = 1/(2*k)*((kold-k)*vold+term);
-        v2 = 1/(2*k)*((kold-k)*vold-term);
-      }
-      {
-        double term = sqrt((k+kold)*(k+kold)*vold*vold-8*k*awmax*dels);
-        v1_star = 1/(2*k)*((kold-k)*vold+term);
-        v2_star = 1/(2*k)*((kold-k)*vold-term);
-      }
-      Interval i1(v2, v2_star);
-      Interval i2(v1_star, v1);
-      ans.push_back(i1);
-      ans.push_back(i2);
-      return ans;
-    }
-  } else if (k < -1e-5) {
-    double term = (k+kold)*(k+kold)*vold*vold+8*k*awmax*dels;
-    if (term < 0) {
-      {
-        double term = sqrt((k+kold)*(k+kold)*vold*vold-8*k*awmax*dels);
-        v1_star = 1/(2*k)*((kold-k)*vold+term);
-        v2_star = 1/(2*k)*((kold-k)*vold-term);
-      }
-      Interval i(v1_star, v2_star);
-      ans.push_back(i);
-      return ans;
-    } else {
-      {
-        double term = sqrt((k+kold)*(k+kold)*vold*vold+8*k*awmax*dels);
-        v1 = 1/(2*k)*((kold-k)*vold+term);
-        v2 = 1/(2*k)*((kold-k)*vold-term);
-      }
-      {
-        double term = sqrt((k+kold)*(k+kold)*vold*vold-8*k*awmax*dels);
-        v1_star = 1/(2*k)*((kold-k)*vold+term);
-        v2_star = 1/(2*k)*((kold-k)*vold-term);
-      }
-      Interval i1(v1_star, v1);
-      Interval i2(v2, v2_star);
-      ans.push_back(i1);
-      ans.push_back(i2);
-      return ans;
-    }
-  } else {
-    // k ~ 0
-    if (kold > -1e-5 && kold < 1e-5) {
-      // kold ~ 0
-      Interval i(-numeric_limits<double>::infinity(),
-        numeric_limits<double>::infinity());
-      ans.push_back(i);
-      return ans;
-    } else {
-      {
-        v1_cap = -2*dels*awmax/(kold*vold)-vold;
-        v2_cap = 2*dels*awmax/(kold*vold)-vold;
-      }
-      if (kold > 1e-5) {
-        Interval i(v1_cap, v2_cap);
-        ans.push_back(i);
-        return ans;
-      } else {
-        Interval i(v2_cap, v1_cap);
-        ans.push_back(i);
-        return ans;
-      }
-    }
-  }
-}
-
-
-
 vector<ProfileDatapoint> generateVelocityProfile(Spline &p, int numPoints, double vls, double vrs, double vle, double vre)
 {
 
@@ -161,15 +71,13 @@ vector<ProfileDatapoint> generateVelocityProfile(Spline &p, int numPoints, doubl
     double dels = full/(numPoints-1);
 
     Integration::refreshMatrix();
-    Integration::computeInverseBezierMatrices(p);
     Integration::computeSplineApprox(p);
-    //Integration::computeBezierMatrices(p);
     for (int i = 0; i < numPoints; i++) {
         double s = full/(numPoints-1)*(double)i;
         double u = Integration::getArcLengthParam(p, s, full);
         double k = p.k(u);
         //NOTE: hardcoding vsat here!!
-        v[i].v = min(vmax_isolated(k, 100), vsat);
+        v[i].v = min(vmax_isolated(k, 120), vsat);
         v[i].u = u;
         v[i].s = s;
     }
@@ -191,10 +99,7 @@ vector<ProfileDatapoint> generateVelocityProfile(Spline &p, int numPoints, doubl
     for (int i = 1; i < numPoints; i++) {
         v[i].t = v[i-1].t + 2*dels/(v[i].v+v[i-1].v);
     }
-    // std::cout << "profile:" ;
-    for (int i = 0; i< numPoints; i++) {
-        // std::cout << v[i].u << v[i].t << v[i].s << v[i].v;
-    }
+
     return v;
 }
 

@@ -18,8 +18,6 @@ public:
   virtual double ydd(double u) const;
   virtual double xddd(double u) const;
   virtual double yddd(double u) const;
-  // returns max of ABSOLUTE value of curvature
-  virtual double maxk(double *u_low = NULL) const;
 };
 #endif // SPLIENS_HPP
 

@@ -138,6 +138,10 @@
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;C:\gsl\lib\gsl.lib;C:\gsl\lib\gslcblas.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common\include\config.cpp" />
@@ -156,7 +160,6 @@
     <ClCompile Include="Skills\alglib\statistics.cpp" />
     <ClCompile Include="Skills\arclength-param.cpp" />
     <ClCompile Include="Skills\controller-wrapper.cpp" />
-    <ClCompile Include="Skills\controllers.cpp" />
     <ClCompile Include="Skills\pose.cpp" />
     <ClCompile Include="Skills\sChargeBall.cpp" />
     <ClCompile Include="Skills\sGoToPointDW.cpp" />

@@ -1,21 +1,6 @@
 #include "stdafx.h"
 #include "controller-wrapper.hpp"
 
-MiscData ControllerWrapper::genControls_(Pose s, Pose e, int &vl, int &vr, double finalVel) {
-    assert(ctrlType == POINTCTRL);
-    Pose x = s;
-    for(deque<pair<int,int> >::iterator it = uq.begin(); it != uq.end(); it++) {
-        x.updateNoDelay(it->first, it->second, timeLC);
-    }
-//    int prevSpeed = max(fabs(prevVl), fabs(prevVr));
-    double prevSpeed = (prevVl+prevVr)/2;
-    double prevOmega = (prevVr- prevVr)/(d);
-    MiscData m = (*fun)(x, e, vl, vr, prevSpeed,prevOmega, finalVel);
-    prevVl = vl; prevVr = vr;
-    uq.push_back(make_pair((int)vl, (int)vr));
-    uq.pop_front();
-    return m;
-}
 MiscData ControllerWrapper::genControls_(Pose s, int &vl, int &vr, double time, bool useTime) {
     assert(ctrlType == TRACKCTRL);
     Pose x = s;
@@ -43,12 +28,6 @@ MiscData ControllerWrapper::genControls_(Pose s, int &vl, int &vr, double time, 
     return m;
 }
 
-ControllerWrapper::ControllerWrapper(FType fun, int start_vl, int start_vr, int k):fun(fun), k(k), ctrlType(POINTCTRL), tracker(),
-                                                                startTime(), isFirstCall(true){
-    for(int i = 0; i < k; i++)
-        uq.push_back(make_pair((int)start_vl,(int)start_vr));
-    prevVl = prevVr = 0;
-}
 ControllerWrapper::ControllerWrapper(Trajectory *traj, int start_vl, int start_vr,  int k):k(k), ctrlType(TRACKCTRL), tracker(traj),
                                                                        startTime(), isFirstCall(true){
     for(int i = 0; i < k; i++)
@@ -80,16 +59,6 @@ double ControllerWrapper::getCurrentTimeS() const
     return elapsedS;
 }
 MiscData ControllerWrapper::genControls(Pose s, Pose e, int &vl, int &vr, double finalVel) {
-    if (ctrlType == POINTCTRL) {
-        return genControls_(s, e, vl, vr, finalVel);
-    } else {
-        return genControls_(s, vl, vr);
-    }
-}
-
-MiscData ControllerWrapper::genControlsTrajSim(Pose s, int &vl, int &vr, double t)
-{
-    assert (ctrlType == TRACKCTRL);
-    return genControls_(s, vl, vr, t, true);
+    return genControls_(s, vl, vr);
 }
 

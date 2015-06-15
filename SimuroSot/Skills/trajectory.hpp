@@ -34,23 +34,6 @@ public:
   virtual double operator()(double u) const = 0;
 };
 
-class ParamPoly: public Integrand {
-protected:
-  vector<double> ax, ay;
-  int n;  // ax.size() = ay.size() = n
-public:
-  ParamPoly();
-  ParamPoly(const vector<double> &ax, const vector<double> &ay);
-  virtual double x(double u) const;
-  virtual double y(double u) const;
-  virtual double xd(double u) const;
-  virtual double yd(double u) const;
-  virtual double xdd(double u) const;
-  virtual double ydd(double u) const;
-  virtual double qd(double u) const; // = sqrt(xd*xd+yd*yd)
-  virtual double operator()(double u) const; // returns qd(u);
-};
-
 // this is an interface class
 // extend spline interface when needed
 // eg.: addPoint, changePoint, remo

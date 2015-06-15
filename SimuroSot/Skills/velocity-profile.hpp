@@ -27,11 +27,6 @@ typedef pair<double, double> Interval;
 // dels: distance between this and old point, cm
 Interval trans_acc_limits(double vold, double atmax, double dels);
 
-// rotational acceleration constraint
-// awmax: maximum rotational acceleration, 1/s^2
-vector<Interval> rot_acc_limits(double vold, double kold, double k, double dels,
-  double awmax);
-
 // ellipse constraint
 // will add later
 struct ProfileDatapoint {

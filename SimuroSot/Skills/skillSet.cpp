@@ -532,27 +532,16 @@ static float vl =0 , vr =0 ;
     const float k=2;
     int count=0;
     double arr[10000][3];
-	// sprintf(debug,"entering ");
-    // Client::debugClient->SendMessages(debug);
-	//sprintf(debug," homeVel.x :: %f || homeVel.y :: %f \n ",state->homeVel[botid].x,state->homeVel[botid].y) ; 
 	float prevSpeed = (vl + vr)/2 ;//sqrt(pow(state->homeVel[botid].x, 2) + pow(state->homeVel[botid].y, 2));
 	float prevOmega = 0.0 ; // (vl - vr)/(2*d);//(vr - vl)/(d) ;//state->homeOmega[botid] ; 
-	//double prevSpeed = (state->homeVel[botid].x+state->homeVel[botid].y)/2;
-   // double prevOmega = (prevVr- prevVl)/(Constants::d);
-	//float prevSpeed, prevOmega,alpha,acc,theta,x,y,reqtheta,dtheta;
 
-    //int i,j;                                                           //i=vr,,j=vl
-	// sprintf(debug,"prevSpeed :: %f || prevomega :: %f \n ",prevSpeed,prevOmega) ;
-    // Client::debugClient->SendMessages(debug);
     for(float del_vr=-del_v_max;del_vr<=del_v_max;del_vr+=step)
         {
             for(float del_vl=-del_v_max;del_vl<=del_v_max;del_vl+=step)
             {
 
                 float newSpeed= prevSpeed + ticksToCmS*(del_vr+del_vl)/2; // cm/s
-                float newOmega= prevOmega + ticksToCmS*(del_vr-del_vl)/d;  // cm/s                //D Is the constant breadth of the bot
-//                qDebug()<<"Trying newSpeed = "<<newSpeed<<" newOmega = "<<newOmega;
-				//sprintf(debug,"newSpeed :: %f || newomega :: %f \n ",newSpeed,newOmega) ;
+                float newOmega= prevOmega + ticksToCmS*(del_vr-del_vl)/d;  // cm/s
 				//Client::debugClient->SendMessages(debug);
 				if(abs(newSpeed/ticksToCmS) >max_vel || abs(newOmega/ticksToCmS) >(2*max_vel)/d)
                     continue;
@@ -560,9 +549,7 @@ static float vl =0 , vr =0 ;
                     continue;
                 if((newSpeed*newOmega)>=a_r_max*sqrt(1-pow((del_vr + del_vl)/(2*del_v_max),2)))
                     continue;                   // constraint from the equation of ellipse.
-                //if(count>400) break;                                 //we would take only a fixed number of points under consideration
-//                qDebug()<<"Trying newSpeed = "<<newSpeed<<" newOmega = "<<newOmega;
-                // float alpha=(newOmega-prevOmega)/t; // rad/cm^2
+
                 float theta= s.theta() + (newOmega*t); //rad
                 theta = normalizeAngle(theta);
 
@@ -576,8 +563,6 @@ static float vl =0 , vr =0 ;
                 arr[count][0]= sqrt(pow((x - e.x()),2) + pow((y - e.y()),2)) + k*pow((dtheta),2) ;         // our objective function
                 arr[count][1]= newSpeed;
                 arr[count][2]= newOmega;
-				//sprintf(debug," count :: %lf || function :: %lf || newspeed :: %lf || newomega :: %lf ",count,arr[count][0],arr[count][1],arr[count][2]);
-                //Client::debugClient->SendMessages(debug);
 				count++;
             }
         }
